@@ -1,0 +1,13 @@
+{
+    "rewrites":  [
+        {
+            "source": "/(.*)", 
+            "destination": "/"
+        }
+    ],
+
+    "env": {
+        "VITE_API_URL": "http://localhost:3333",
+        "VITE_ENABLE_API_DELAY": "false"
+    }
+}
