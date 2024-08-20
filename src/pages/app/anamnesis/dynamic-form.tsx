@@ -90,7 +90,7 @@ const DynamicForm: React.FC<{ form: Form }> = ({ form }) => {
             id={`question-${question.id}`}
             className="min-h-36"
             {...register(question.id.toString())}
-            placeholder={question.title}
+            // placeholder={question.title}
           />
         )
       case 'MULTIPLE_CHOICE':
