@@ -32,7 +32,7 @@ export function Athletes() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const athleteName = searchParams.get('athleteName')
-  const status = searchParams.get('status')
+  const status = searchParams.get('status') ?? 'active'
 
   const pageIndex = z.coerce
     .number()

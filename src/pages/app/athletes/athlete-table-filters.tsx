@@ -40,7 +40,7 @@ export function AthleteTableFilters() {
       resolver: zodResolver(searchFilterSchema),
       defaultValues: {
         athleteName: athleteName ?? '',
-        status: status ?? 'all',
+        status: status ?? 'active',
       },
     })
 
@@ -76,7 +76,7 @@ export function AthleteTableFilters() {
 
     reset({
       athleteName: '',
-      status: 'all',
+      status: 'active',
     })
   }
 
@@ -110,7 +110,7 @@ export function AthleteTableFilters() {
         control={control}
         render={({ field: { name, onChange, value, disabled } }) => (
           <Select
-            defaultValue="all"
+            defaultValue="active"
             name={name}
             onValueChange={onChange}
             value={value}
