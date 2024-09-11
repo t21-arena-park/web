@@ -1,5 +1,5 @@
+/* eslint-disable no-prototype-builtins */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { ZodSchema, ZodType, z } from 'zod'
@@ -17,6 +17,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
+import { Select } from '@/components/ui/select'
 
 interface Question {
   id: number
@@ -74,6 +75,31 @@ const DynamicForm: React.FC<{ form: Form }> = ({ form }) => {
         case 'MULTIPLE_CHOICE':
           schema[question.id.toString()] = z.string().optional()
           break
+        case 'TRUE_FALSE':
+          schema[question.id.toString()] = z.string().optional()
+          break
+        case 'SHORT_ANSWER':
+          schema[question.id.toString()] = z.string().optional()
+          break
+        case 'RATING':
+          schema[question.id.toString()] = z.string().optional()
+          break
+        case 'DATE':
+          schema[question.id.toString()] = z.string().optional()
+          break
+        case 'TIME':
+          schema[question.id.toString()] = z.string().optional()
+          break
+        case 'NUMBER':
+          schema[question.id.toString()] = z.string().optional()
+          break
+        case 'MULTI_SELECT':
+          schema[question.id.toString()] = z.string().optional()
+          break
+        case 'DROPDOWN':
+          schema[question.id.toString()] = z.string().optional()
+          break
+
         default:
           break
       }
@@ -99,8 +125,164 @@ const DynamicForm: React.FC<{ form: Form }> = ({ form }) => {
             name={question.id.toString()}
             control={control}
             render={({ field }) => (
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="opcao1"
+                    checked={field.value?.includes('opcao1') || false}
+                    onChange={(e) => {
+                      const selectedOptions = field.value || []
+                      if (e.target.checked) {
+                        field.onChange([...selectedOptions, e.target.value])
+                      } else {
+                        field.onChange(
+                          selectedOptions.filter(
+                            (option: string) => option !== e.target.value,
+                          ),
+                        )
+                      }
+                    }}
+                  />
+                  Opção 1
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="opcao2"
+                    checked={field.value?.includes('opcao2') || false}
+                    onChange={(e) => {
+                      const selectedOptions = field.value || []
+                      if (e.target.checked) {
+                        field.onChange([...selectedOptions, e.target.value])
+                      } else {
+                        field.onChange(
+                          selectedOptions.filter(
+                            (option: string) => option !== e.target.value,
+                          ),
+                        )
+                      }
+                    }}
+                  />
+                  Opção 2
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="opcao3"
+                    checked={field.value?.includes('opcao3') || false}
+                    onChange={(e) => {
+                      const selectedOptions = field.value || []
+                      if (e.target.checked) {
+                        field.onChange([...selectedOptions, e.target.value])
+                      } else {
+                        field.onChange(
+                          selectedOptions.filter(
+                            (option: string) => option !== e.target.value,
+                          ),
+                        )
+                      }
+                    }}
+                  />
+                  Opção 3
+                </label>
+              </div>
+            )}
+          />
+        )
+      case 'TRUE_FALSE':
+        return (
+          <Controller
+            name={question.id.toString()}
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    value="true"
+                    checked={field.value === true}
+                    onChange={() => field.onChange(true)}
+                  />
+                  Verdadeiro
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="false"
+                    checked={field.value === false}
+                    onChange={() => field.onChange(false)}
+                  />
+                  Falso
+                </label>
+              </div>
+            )}
+          />
+        )
+
+      case 'SHORT_ANSWER':
+        return (
+          <input
+            type="text"
+            id={`question-${question.id}`}
+            {...register(question.id.toString())}
+          />
+        )
+      case 'RATING':
+        return (
+          <input
+            type="number"
+            id={`question-${question.id}`}
+            {...register(question.id.toString())}
+            min={1}
+            max={5} // Por exemplo, de 1 a 5 estrelas
+          />
+        )
+      case 'DATE':
+        return (
+          <input
+            type="date"
+            id={`question-${question.id}`}
+            {...register(question.id.toString())}
+          />
+        )
+      case 'TIME':
+        return (
+          <input
+            type="time"
+            id={`question-${question.id}`}
+            {...register(question.id.toString())}
+          />
+        )
+      case 'NUMBER':
+        return (
+          <input
+            type="number"
+            id={`question-${question.id}`}
+            {...register(question.id.toString())}
+          />
+        )
+      case 'MULTI_SELECT':
+        return (
+          <Controller
+            name={question.id.toString()}
+            control={control}
+            render={({ field }) => (
+              <Select multiple {...field}>
+                <option value="opcao1">Opção 1</option>
+                <option value="opcao2">Opção 2</option>
+                <option value="opcao3">Opção 3</option>
+              </Select>
+            )}
+          />
+        )
+      case 'DROPDOWN':
+        return (
+          <Controller
+            name={question.id.toString()}
+            control={control}
+            render={({ field }) => (
               <select {...field}>
-                {/* Placeholder for options */}
                 <option value="">Selecione uma opção</option>
                 <option value="opcao1">Opção 1</option>
                 <option value="opcao2">Opção 2</option>
