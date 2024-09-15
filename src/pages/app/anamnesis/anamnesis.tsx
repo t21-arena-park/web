@@ -18,6 +18,8 @@ import { useForm } from "react-hook-form";
 
 import { toast } from "sonner";
 
+import { useEffect } from "react";
+
 import {
   updateAnswer,
   UpdateAnswerParams,
@@ -25,6 +27,7 @@ import {
 } from "@/api/update-anamnesis-answer";
 
 import { MenuItem, Select, Chip, Box } from "@mui/material";
+import { MultiSelect } from "@/components/multiselect";
 
 const ICON_MAP: Record<string, JSX.Element> = {
   LIST_TODO: <ListTodo className="size-5" />,
@@ -36,16 +39,6 @@ type FormData = {
     answer: string;
   };
 };
-
-enum PersonalityTraits {
-  ANXIOUS = "Ansioso",
-  DEPRESSED = "Deprimido",
-  ANGRY = "Raivoso",
-  IRRITABLE = "Irritável",
-  FEARFUL = "Medroso",
-  STABLE = "Estável",
-  UNSTABLE = "Instável",
-}
 
 export function Anamnesis() {
   const params = useParams<{ id: string }>();
@@ -74,7 +67,19 @@ export function Anamnesis() {
     register,
     handleSubmit,
     formState: { isSubmitting, isDirty },
+    setValue,
   } = useForm<FormData>({ defaultValues });
+
+  const onChangeMultiSelect = (
+    values: string[],
+    questionId: number,
+    sectionId: number
+  ): void => {
+    const fieldKey = `${sectionId}_${questionId}`;
+    const newAnswer = values.join(";");
+
+    setValue(`${fieldKey}.answer`, newAnswer, { shouldDirty: true });
+  };
 
   const { mutateAsync: updateAnswerFn } = useMutation({
     mutationFn: (data: {
@@ -108,7 +113,7 @@ export function Anamnesis() {
                 body: {
                   value: !Array.isArray(newAnswer)
                     ? newAnswer
-                    : newAnswer.join(","),
+                    : newAnswer.join(";"),
                 },
               });
             }
@@ -215,41 +220,70 @@ export function Anamnesis() {
                                 )}
 
                                 {question.question_type === "MULTI_SELECT" && (
-                                  <Select
-                                    id={`${uniqueKey}.answer`}
-                                    className=""
+                                  // <><Select
+                                  //   id={`${uniqueKey}.answer`}
+                                  //   defaultValue={question.answers.value.split(",") || []}
+                                  //   {...register(`${uniqueKey}.answer`)}
+                                  //   multiple
+                                  //   sx={{
+                                  //     backgroundColor: "#0f172a",
+                                  //     borderColor: "#334155",
+                                  //   }}
+                                  //   renderValue={(selected) => (
+                                  //     <Box
+                                  //       sx={{
+                                  //         display: "flex",
+                                  //         flexWrap: "wrap",
+                                  //         gap: 0.5,
+                                  //       }}
+                                  //     >
+                                  //       {selected.map((value) => (
+                                  //         <Chip
+                                  //           key={value}
+                                  //           label={value}
+                                  //           sx={{
+                                  //             color: "white",
+                                  //             backgroundColor: "#334155",
+                                  //             ":hover": {
+                                  //               backgroundColor: "#a3e635",
+                                  //               color: "black",
+                                  //             },
+                                  //           }} />
+                                  //       ))}
+                                  //     </Box>
+                                  //   )}
+                                  // >
+                                  //   {Object.values(PersonalityTraits).map(
+                                  //     (p) => {
+                                  //       return (
+                                  //         <MenuItem
+                                  //           sx={{
+                                  //             backgroundColor: "rgb(30 41 59)",
+                                  //             color: "white",
+                                  //           }}
+                                  //           value={p}
+                                  //         >
+                                  //           {p}
+                                  //         </MenuItem>
+                                  //       );
+                                  //     }
+                                  //   )}
+                                  // </Select>
+                                  <MultiSelect
+                                    options={question.options ?? ""}
+                                    questionId={question.id}
+                                    sectionId={section.id}
+                                    onValueChange={onChangeMultiSelect}
                                     defaultValue={
-                                      question.answers.value.split(",") || []
+                                      !!question.answers.value
+                                        ? question.answers.value.split(";")
+                                        : []
                                     }
-                                    {...register(`${uniqueKey}.answer`)}
-                                    multiple
-                                    renderValue={(selected) => (
-                                      <Box
-                                        sx={{
-                                          display: "flex",
-                                          flexWrap: "wrap",
-                                          gap: 0.5,
-                                        }}
-                                      >
-                                        {selected.map((value) => (
-                                          <Chip
-                                            key={value}
-                                            label={value}
-                                            className=""
-                                            // sx={{ color: "white" }}
-                                          />
-                                        ))}
-                                      </Box>
-                                    )}
-                                  >
-                                    {Object.values(PersonalityTraits).map(
-                                      (p) => {
-                                        return (
-                                          <MenuItem value={p}>{p}</MenuItem>
-                                        );
-                                      }
-                                    )}
-                                  </Select>
+                                    placeholder="Select options"
+                                    variant="inverted"
+                                    animation={2}
+                                    maxCount={3}
+                                  />
                                 )}
                               </section>
                             </div>

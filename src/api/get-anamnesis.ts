@@ -28,7 +28,6 @@ interface GetAnamnesisResponse {
         value: string
         question_id: number
       }
-
       observation: string
       question_type:
         | 'ESSAY'
@@ -41,6 +40,8 @@ interface GetAnamnesisResponse {
         | 'NUMBER'
         | 'MULTI_SELECT'
         | 'DROPDOWN'
+
+      options?: string
     }[]
   }[]
 }
