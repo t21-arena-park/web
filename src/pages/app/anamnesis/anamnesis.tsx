@@ -8,7 +8,13 @@ import { useParams } from "react-router-dom";
 
 import { Helmet } from "react-helmet-async";
 
-import { ChevronRight, ListTodo, Loader2, Loader2Icon } from "lucide-react";
+import {
+  Brain,
+  ChevronRight,
+  ListTodo,
+  Loader2,
+  Loader2Icon,
+} from "lucide-react";
 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,11 +32,11 @@ import {
   UpdateAnswerBody,
 } from "@/api/update-anamnesis-answer";
 
-import { MenuItem, Select, Chip, Box } from "@mui/material";
 import { MultiSelect } from "@/components/multiselect";
 
 const ICON_MAP: Record<string, JSX.Element> = {
   LIST_TODO: <ListTodo className="size-5" />,
+  BRAIN: <Brain className="size-5" />,
 };
 
 type FormData = {
@@ -220,55 +226,6 @@ export function Anamnesis() {
                                 )}
 
                                 {question.question_type === "MULTI_SELECT" && (
-                                  // <><Select
-                                  //   id={`${uniqueKey}.answer`}
-                                  //   defaultValue={question.answers.value.split(",") || []}
-                                  //   {...register(`${uniqueKey}.answer`)}
-                                  //   multiple
-                                  //   sx={{
-                                  //     backgroundColor: "#0f172a",
-                                  //     borderColor: "#334155",
-                                  //   }}
-                                  //   renderValue={(selected) => (
-                                  //     <Box
-                                  //       sx={{
-                                  //         display: "flex",
-                                  //         flexWrap: "wrap",
-                                  //         gap: 0.5,
-                                  //       }}
-                                  //     >
-                                  //       {selected.map((value) => (
-                                  //         <Chip
-                                  //           key={value}
-                                  //           label={value}
-                                  //           sx={{
-                                  //             color: "white",
-                                  //             backgroundColor: "#334155",
-                                  //             ":hover": {
-                                  //               backgroundColor: "#a3e635",
-                                  //               color: "black",
-                                  //             },
-                                  //           }} />
-                                  //       ))}
-                                  //     </Box>
-                                  //   )}
-                                  // >
-                                  //   {Object.values(PersonalityTraits).map(
-                                  //     (p) => {
-                                  //       return (
-                                  //         <MenuItem
-                                  //           sx={{
-                                  //             backgroundColor: "rgb(30 41 59)",
-                                  //             color: "white",
-                                  //           }}
-                                  //           value={p}
-                                  //         >
-                                  //           {p}
-                                  //         </MenuItem>
-                                  //       );
-                                  //     }
-                                  //   )}
-                                  // </Select>
                                   <MultiSelect
                                     options={question.options ?? ""}
                                     questionId={question.id}
