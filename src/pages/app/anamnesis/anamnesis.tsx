@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom'
 
 import { Helmet } from 'react-helmet-async'
 
-import { ChevronRight, ListTodo, Loader2, Loader2Icon } from 'lucide-react'
+import { BrainCircuit, ChevronRight, ListTodo, Loader2, Loader2Icon, Pill } from 'lucide-react'
 
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -26,6 +26,8 @@ import {
 
 const ICON_MAP: Record<string, JSX.Element> = {
   LIST_TODO: <ListTodo className="size-5" />,
+  BRAIN_CIRCUIT: <BrainCircuit className="size-5" />,
+  PILL: <Pill className="size-5" />
 }
 
 type FormData = {
@@ -48,14 +50,14 @@ export function Anamnesis() {
 
   const defaultValues: FormData = anamnesis
     ? anamnesis.sections.reduce((acc, section) => {
-        section.questions.forEach((question) => {
-          acc[`${section.id}_${question.id}`] = {
-            id: question.id,
-            answer: question.answers.value || '',
-          }
-        })
-        return acc
-      }, {} as FormData)
+      section.questions.forEach((question) => {
+        acc[`${section.id}_${question.id}`] = {
+          id: question.id,
+          answer: question.answers.value || '',
+        }
+      })
+      return acc
+    }, {} as FormData)
     : {}
 
   const {
@@ -190,14 +192,48 @@ export function Anamnesis() {
                                   {question.title}
                                 </Label>
 
-                                {question.question_type === 'ESSAY' && (
-                                  <Textarea
-                                    id={`${uniqueKey}.answer`}
-                                    className="min-h-36"
-                                    defaultValue={question.answers.value || ''}
-                                    {...register(`${uniqueKey}.answer`)}
-                                  />
-                                )}
+                                {question.question_type === 'MULTIPLE_CHOICE' ? (
+                                  <section className="flex flex-col">
+                                    {question.answers?.value.split(',').map((option, index) => (
+                                      <label key={index} className="flex items-center gap-2 mb-1">
+                                        <input
+                                          type="radio"
+                                          value={option.trim()}
+                                          {...register(question.id.toString())}
+                                          className="size-4 hidden peer"
+                                        />
+                                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:bg-[#84CC16]"></div>
+                                        <span className="inline-block text-md text-slate-400">{option.trim()}</span>
+                                      </label>
+                                    ))}
+                                  </section>
+                                ) :
+                                  question.question_type === 'MULTI_SELECT' ? (
+                                    <section className="flex flex-col">
+                                      {question.answers?.value.split(',').map((option, index) => (
+                                        <label key={index} className="flex items-center gap-2 mb-1">
+                                          <input
+                                            type="checkbox"
+                                            value={option.trim()}
+                                            className="hidden peer"
+                                            {...register(`${uniqueKey}.answers`)}
+                                          />
+                                          <div className="w-5 h-5 rounded-xl border-2 border-gray-300 peer-checked:bg-[#84CC16] flex items-center justify-center">
+                                            <div className="w-3 h-3 bg-white rounded hidden peer-checked:block"></div>
+                                          </div>
+                                          <span className="inline-block text-md text-slate-400">{option.trim()}</span>
+                                        </label>
+                                      ))}
+                                    </section>
+                                  ) :
+                                    question.question_type === 'ESSAY' ? (
+                                      <textarea
+                                        id={`${uniqueKey}.answer`}
+                                        className="min-h-36 bg-[#0F172A] rounded-md"
+                                        defaultValue={question.answers.value || ''}
+                                        {...register(`${uniqueKey}.answer`)}
+                                      />
+                                    ) : null}
                               </section>
                             </div>
                           )
