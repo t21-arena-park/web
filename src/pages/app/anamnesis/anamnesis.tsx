@@ -1,89 +1,113 @@
-import * as Tabs from '@radix-ui/react-tabs'
+import * as Tabs from "@radix-ui/react-tabs";
 
-import { getAnamnesis } from '@/api/get-anamnesis'
+import { getAnamnesis } from "@/api/get-anamnesis";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useParams } from 'react-router-dom'
+import { useParams } from "react-router-dom";
 
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from "react-helmet-async";
 
-import { ChevronRight, ListTodo, Loader2, Loader2Icon } from 'lucide-react'
+import {
+  Brain,
+  ChevronRight,
+  ListTodo,
+  Loader2,
+  Loader2Icon,
+} from "lucide-react";
 
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
-import { useForm } from 'react-hook-form'
+import { useForm } from "react-hook-form";
 
-import { toast } from 'sonner'
+import { toast } from "sonner";
+
+import { useEffect } from "react";
 
 import {
   updateAnswer,
   UpdateAnswerParams,
   UpdateAnswerBody,
-} from '@/api/update-anamnesis-answer'
+} from "@/api/update-anamnesis-answer";
+
+import { MultiSelect } from "@/components/multiselect";
 
 const ICON_MAP: Record<string, JSX.Element> = {
   LIST_TODO: <ListTodo className="size-5" />,
-}
+  BRAIN: <Brain className="size-5" />,
+};
 
 type FormData = {
   [key: string]: {
-    id: number
-    answer: string
-  }
-}
+    id: number;
+    answer: string;
+  };
+};
 
 export function Anamnesis() {
-  const params = useParams<{ id: string }>()
-  const id = params.id ?? ''
-  const queryClient = useQueryClient()
+  const params = useParams<{ id: string }>();
+  const id = params.id ?? "";
+  const queryClient = useQueryClient();
 
   const { data: anamnesis, isLoading: isPageLoading } = useQuery({
-    queryKey: ['anamnesis', id],
+    queryKey: ["anamnesis", id],
     queryFn: () => getAnamnesis({ id }),
-    enabled: id !== '',
-  })
+    enabled: id !== "",
+  });
 
   const defaultValues: FormData = anamnesis
     ? anamnesis.sections.reduce((acc, section) => {
         section.questions.forEach((question) => {
           acc[`${section.id}_${question.id}`] = {
             id: question.id,
-            answer: question.answers.value || '',
-          }
-        })
-        return acc
+            answer: question.answers.value || "",
+          };
+        });
+        return acc;
       }, {} as FormData)
-    : {}
+    : {};
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, isDirty },
-  } = useForm<FormData>({ defaultValues })
+    setValue,
+  } = useForm<FormData>({ defaultValues });
+
+  const onChangeMultiSelect = (
+    values: string[],
+    questionId: number,
+    sectionId: number
+  ): void => {
+    const fieldKey = `${sectionId}_${questionId}`;
+    const newAnswer = values.join(";");
+
+    setValue(`${fieldKey}.answer`, newAnswer, { shouldDirty: true });
+  };
 
   const { mutateAsync: updateAnswerFn } = useMutation({
     mutationFn: (data: {
-      params: UpdateAnswerParams
-      body: UpdateAnswerBody
+      params: UpdateAnswerParams;
+      body: UpdateAnswerBody;
     }) => updateAnswer(data.params, data.body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['anamnesis', id] })
+      queryClient.invalidateQueries({ queryKey: ["anamnesis", id] });
     },
     onError: () => {
-      toast.error('Aconteceu um erro inesperado.')
+      toast.error("Aconteceu um erro inesperado.");
     },
-  })
+  });
 
   async function handleSectionSubmit(data: FormData) {
     try {
+      console.log(JSON.stringify(data, null, 2));
       if (anamnesis) {
         for (const section of anamnesis.sections) {
           for (const question of section.questions) {
-            const uniqueKey = `${section.id}_${question.id}`
-            const newAnswer = data[uniqueKey]?.answer || ''
+            const uniqueKey = `${section.id}_${question.id}`;
+            const newAnswer = data[uniqueKey]?.answer || "";
 
             if (newAnswer !== question.answers.value) {
               await updateAnswerFn({
@@ -93,17 +117,19 @@ export function Anamnesis() {
                   questionId: question.id,
                 },
                 body: {
-                  value: newAnswer,
+                  value: !Array.isArray(newAnswer)
+                    ? newAnswer
+                    : newAnswer.join(";"),
                 },
-              })
+              });
             }
           }
         }
 
-        toast.success('Dados da anamnese do usuário atualizados com sucesso!')
+        toast.success("Dados da anamnese do usuário atualizados com sucesso!");
       }
     } catch (error) {
-      toast.error('Aconteceu um erro ao atualizar as respostas.')
+      toast.error("Aconteceu um erro ao atualizar as respostas.");
     }
   }
 
@@ -112,7 +138,7 @@ export function Anamnesis() {
       <div className="w-screen min-h-screen flex items-center justify-center">
         <Loader2 className="size-6 animate-spin text-slate-600" />
       </div>
-    )
+    );
   }
 
   return (
@@ -173,7 +199,7 @@ export function Anamnesis() {
                     >
                       <div className="py-10 px-12 border border-slate-700 bg-slate-800 rounded-md space-y-6">
                         {section.questions.map((question) => {
-                          const uniqueKey = `${section.id}_${question.id}`
+                          const uniqueKey = `${section.id}_${question.id}`;
 
                           return (
                             <div className="flex flex-col" key={question.id}>
@@ -190,17 +216,35 @@ export function Anamnesis() {
                                   {question.title}
                                 </Label>
 
-                                {question.question_type === 'ESSAY' && (
+                                {question.question_type === "ESSAY" && (
                                   <Textarea
                                     id={`${uniqueKey}.answer`}
                                     className="min-h-36"
-                                    defaultValue={question.answers.value || ''}
+                                    defaultValue={question.answers.value || ""}
                                     {...register(`${uniqueKey}.answer`)}
+                                  />
+                                )}
+
+                                {question.question_type === "MULTI_SELECT" && (
+                                  <MultiSelect
+                                    options={question.options ?? ""}
+                                    questionId={question.id}
+                                    sectionId={section.id}
+                                    onValueChange={onChangeMultiSelect}
+                                    defaultValue={
+                                      !!question.answers.value
+                                        ? question.answers.value.split(";")
+                                        : []
+                                    }
+                                    placeholder="Select options"
+                                    variant="inverted"
+                                    animation={2}
+                                    maxCount={3}
                                   />
                                 )}
                               </section>
                             </div>
-                          )
+                          );
                         })}
                       </div>
 
@@ -227,5 +271,5 @@ export function Anamnesis() {
         </div>
       </div>
     </>
-  )
+  );
 }
