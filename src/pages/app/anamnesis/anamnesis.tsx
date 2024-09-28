@@ -33,6 +33,7 @@ import {
 } from "@/api/update-anamnesis-answer";
 
 import { MultiSelect } from "@/components/multiselect";
+import { RadioComponent } from "@/components/radio";
 
 const ICON_MAP: Record<string, JSX.Element> = {
   LIST_TODO: <ListTodo className="size-5" />,
@@ -84,6 +85,16 @@ export function Anamnesis() {
     const fieldKey = `${sectionId}_${questionId}`;
     const newAnswer = values.join(";");
 
+    setValue(`${fieldKey}.answer`, newAnswer, { shouldDirty: true });
+  };
+
+  const onChangeRadio = (
+    values: string,
+    questionId: number,
+    sectionId: number
+  ): void => {
+    const fieldKey = `${sectionId}_${questionId}`;
+    const newAnswer = values;
     setValue(`${fieldKey}.answer`, newAnswer, { shouldDirty: true });
   };
 
@@ -240,6 +251,16 @@ export function Anamnesis() {
                                     variant="inverted"
                                     animation={2}
                                     maxCount={3}
+                                  />
+                                )}
+
+                                {question.question_type === "TRUE_FALSE" && (
+                                  <RadioComponent
+                                    questionId={question.id}
+                                    sectionId={section.id}
+                                    onValueChange={onChangeRadio}
+                                    defaultValue={question.answers.value}
+                                    {...register(`${uniqueKey}.answer`)}
                                   />
                                 )}
                               </section>
