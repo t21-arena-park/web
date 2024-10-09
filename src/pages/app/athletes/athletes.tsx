@@ -1,6 +1,7 @@
-import { Helmet } from 'react-helmet-async'
+/* eslint-disable prettier/prettier */
+import { Helmet } from "react-helmet-async";
 
-import { Pagination } from '@/components/pagination'
+import { Pagination } from "@/components/pagination";
 
 import {
   Table,
@@ -9,47 +10,49 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/table";
 
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from "react-router-dom";
 
-import { z } from 'zod'
+import { z } from "zod";
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from "@tanstack/react-query";
 
-import { getAthletes } from '@/api/get-athletes'
+import { getAthletes } from "@/api/get-athletes";
 
-import { AthleteTableRow } from './athlete-table-row'
-import { AthleteTableSkeleton } from './athlete-table-skeleton'
-import { AthleteTableFilters } from './athlete-table-filters'
-import { AthleteDialog } from './athlete-dialog'
+import { AthleteDialog } from "./athlete-dialog";
+import { AthleteTableFilters } from "./athlete-table-filters";
+import { AthleteTableRow } from "./athlete-table-row";
+import { AthleteTableSkeleton } from "./athlete-table-skeleton";
 
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
+import { ImportDialog } from "./upload-dialog";
 
 export function Athletes() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const athleteName = searchParams.get('athleteName')
-  const status = searchParams.get('status') ?? 'active'
+  const athleteName = searchParams.get("athleteName");
+  const status = searchParams.get("status") ?? "active";
 
   const pageIndex = z.coerce
     .number()
     .transform((page) => page - 1)
-    .parse(searchParams.get('page') ?? '1')
+    .parse(searchParams.get("page") ?? "1");
 
   const { data: result, isLoading: isLoadingAthletes } = useQuery({
-    queryKey: ['athletes', pageIndex, athleteName, status],
+    queryKey: ["athletes", pageIndex, athleteName, status],
     queryFn: () => getAthletes({ pageIndex, athleteName, status }),
-  })
+  });
 
   function handlePaginate(pageIndex: number) {
     setSearchParams((state) => {
-      state.set('page', (pageIndex + 1).toString())
+      state.set("page", (pageIndex + 1).toString());
 
-      return state
-    })
+      return state;
+    });
   }
 
   return (
@@ -71,15 +74,32 @@ export function Athletes() {
           <div className="flex items-center justify-between">
             <AthleteTableFilters />
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button type="button" variant="primary" size="xs">
-                  Cadastrar
-                </Button>
-              </DialogTrigger>
+            <div className="flex gap-4">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="xs"
+                    className="flex gap-2"
+                  >
+                    <Upload className="size-4" /> Importar
+                  </Button>
+                </DialogTrigger>
 
-              <AthleteDialog />
-            </Dialog>
+                <ImportDialog />
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button type="button" variant="primary" size="xs">
+                    Cadastrar
+                  </Button>
+                </DialogTrigger>
+
+                <AthleteDialog />
+              </Dialog>
+            </div>
           </div>
 
           <div className="rounded-lg border overflow-hidden border-slate-700">
@@ -108,7 +128,7 @@ export function Athletes() {
                   <TableRow>
                     <TableCell
                       colSpan={8}
-                      className={`text-center text-slate-400 ${isLoadingAthletes && 'hidden'}`}
+                      className={`text-center text-slate-400 ${isLoadingAthletes && "hidden"}`}
                     >
                       Nenhum atleta encontrado
                     </TableCell>
@@ -129,5 +149,5 @@ export function Athletes() {
         )}
       </div>
     </>
-  )
+  );
 }
