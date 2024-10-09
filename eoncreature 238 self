@@ -1,0 +1,29 @@
+[33mcommit fa8b0d1f68588ae7300fa2e2df6e05b6549a458f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev/matheus-menicalli[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/dev/matheus-menicalli[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Wesley Bernardes <bw3sley@gmail.com>
+Date:   Wed Sep 4 13:45:56 2024 -0300
+
+    :sparkles: feat: add anamnesis and athlete filters improvement
+
+[33mcommit e8aa317b11fd033df4a40a27ebd45d08495eb92c[m
+Author: Wesley Bernardes <bw3sley@gmail.com>
+Date:   Tue Aug 20 20:55:06 2024 -0300
+
+    :sparkles: feat: remove placeholder
+
+[33mcommit e656a2baaeed763bcf91c72dcad4e469ba587227[m
+Author: Wesley Bernardes <bw3sley@gmail.com>
+Date:   Tue Aug 20 20:44:31 2024 -0300
+
+    :sparkles: feat: add dynamic-form funcionality
+
+[33mcommit 5708243bc818f41eeafc2217359db206a2442d80[m
+Author: Wesley Bernardes <bw3sley@gmail.com>
+Date:   Thu Aug 15 01:29:44 2024 -0300
+
+    :memo: docs: create project README.md
+
+[33mcommit 67b40c291673656b3a2840ca43eb1d5a0256d9b2[m
+Author: Wesley Bernardes <bw3sley@gmail.com>
+Date:   Sat Aug 10 14:36:14 2024 -0300
+
+    :tada: chore: initial commit

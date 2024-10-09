@@ -10,6 +10,10 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 
 import { AthleteProfileDialog } from './athlete-profile-dialog'
 
+import { AthleteProfileTermos } from './athlete-profile-termos'
+
+import { AthleteProfileTermosImagem } from './athlete-profile-termosimagens'
+
 import { Label } from '@/components/ui/label'
 
 import { Input, Control } from '@/components/ui/input'
@@ -21,6 +25,7 @@ import {
   ShieldCheck,
   Loader2,
   Plus,
+  Download,
 } from 'lucide-react'
 
 import { bloodTypeMap, genderMap, handednessMap } from '@/utils/i18n'
@@ -249,7 +254,53 @@ export function AthleteProfile() {
                   </div>
                 </div>
               </div>
-            </aside>
+              <br>
+              </br>
+
+              <div className="flex border border-slate-700 rounded gap-3 flex-col relative overflow-hidden py-6">
+              <strong className="font-semibold px-6">Termos</strong>
+
+              <ul className="flex flex-col px-4 list-disc">
+               <li className="group py-2 px-3 cursor-pointer text-slate-300 hover:bg-slate-800 rounded flex items-center justify-between transition-colors">
+              <div className="space-x-4 text-md">
+           <span>&#8226;</span>
+           <span>Termo de responsabilidade</span>
+             </div>
+
+      <Dialog>
+        <DialogTrigger asChild>
+          <button
+            type="button"
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <Download className="size-4" />
+          </button>
+        </DialogTrigger>
+        <AthleteProfileTermos athlete={athlete} />
+      </Dialog>
+    </li>
+
+    <li className="group py-2 px-3 cursor-pointer text-slate-300 hover:bg-slate-800 rounded flex items-center justify-between transition-colors">
+      <div className="space-x-4 text-md">
+        <span>&#8226;</span>
+        <span>Termo de imagem</span>
+      </div>
+      <Dialog>
+      <DialogTrigger asChild>
+
+      <button
+        type="button"
+        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+      >
+        <Download className="size-4" />
+      </button>
+      </DialogTrigger>
+        <AthleteProfileTermosImagem athlete={athlete} />
+      </Dialog>
+    </li>
+  </ul>
+</div>
+</aside>
 
             <div className="flex flex-col gap-4 overflow-hidden">
               <div className="flex bg-slate-800 border border-slate-700 rounded p-6 relative gap-4">
